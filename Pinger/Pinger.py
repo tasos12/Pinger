@@ -38,8 +38,6 @@ def createNetworkObjectList(object_list):
         object_list.append(NetworkObject(info[0], info[1]))
 
 def pingThread(o):
-    global scanning
-    global quitting
     while(True):
         if(quitting):
             break
@@ -47,21 +45,19 @@ def pingThread(o):
             response = ping(o.ip, count=5, timeout=4)
             o.connected = response.success()
             o.ms = response.rtt_avg_ms
-            time.sleep(5)        
+            time.sleep(1)        
 
 def pingNetworkObjects(obj):
     for i in range(len(obj)):
         Thread(target = pingThread, args=(obj[i],)).start()
         
 def renderNetworkObjectsInfo(obj):
-    global scanning
-    global quitting
+    init(autoreset=True)
     while(True):
         if(quitting):
             break
         if(scanning):
-            os.system('cls')
-            init(autoreset=True)
+            os.system('cls')         
             print(Back.CYAN + Style.BRIGHT + '{:<18}  {:<15}  {:<10} {:<8}'.format("IP", "DEVICE", "STATUS", "MS"))
             for i in range(len(obj)):
                 if obj[i].connected:
